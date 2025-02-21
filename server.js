@@ -3,12 +3,14 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({ origin: "*", methods: "GET,POST", allowedHeaders: "Content-Type" })
+);
 app.use(express.json());
 
-const USER_ID = "john_doe_17091999";
-const EMAIL = "john@xyz.com";
-const ROLL_NUMBER = "ABCD123";
+const USER_ID = "Anshu";
+const EMAIL = "iakumar0132@gmail.com";
+const ROLL_NUMBER = "22BCS10150";
 
 // Function to process input data
 function processData(data) {
@@ -27,7 +29,10 @@ app.get("/bfhl", (req, res) => {
 app.post("/bfhl", (req, res) => {
   try {
     const { data } = req.body;
-    if (!Array.isArray(data)) throw new Error("Invalid input format");
+
+    if (!data || !Array.isArray(data)) {
+      throw new Error("Invalid JSON format: 'data' must be an array");
+    }
 
     const { numbers, alphabets, highestAlphabet } = processData(data);
 
@@ -41,10 +46,11 @@ app.post("/bfhl", (req, res) => {
       highest_alphabet: highestAlphabet,
     });
   } catch (error) {
-    res.status(400).json({ is_success: false, message: "Invalid JSON format" });
+    console.error("Error:", error.message);
+    res.status(400).json({ is_success: false, message: error.message });
   }
 });
 
 // Start the server
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
